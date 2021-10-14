@@ -10,7 +10,7 @@ const DEFAULT_NODE_ENDPOINT = 'https://solana-api.projectserum.com'
 
 const argv = yargs
   .scriptName('serum-vial')
-  .env('SV_')
+  .env('MV_')
   .strict()
 
   .option('port', {
