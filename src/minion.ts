@@ -8,7 +8,6 @@ import {
   executeAndRetry,
   getAllowedValuesText,
   getDidYouMean,
-  loadPerpMarket,
   minionReadyChannel,
   mangoDataChannel,
   mangoMarketsChannel,

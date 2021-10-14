@@ -53,7 +53,7 @@ export class MangoProducer {
       wsEndpointPort: this._options.wsEndpointPort
     })
 
-    const market = await loadPerpMarket(this._options.marketName)
+    const market = await loadPerpMarket(this._options.nodeEndpoint, this._options.marketName)
 
     const priceDecimalPlaces = decimalPlaces(market.tickSize)
     const sizeDecimalPlaces = decimalPlaces(market.minOrderSize)

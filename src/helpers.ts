@@ -140,10 +140,10 @@ export function getDefaultMarkets(): MangoPerpMarket[] {
   return defaultMarkets
 }
 
-export async function loadPerpMarket(marketName: string): Promise<PerpMarket> {
+export async function loadPerpMarket(nodeEndpoint: string, marketName: string): Promise<PerpMarket> {
   const groupName = process.env.GROUP_NAME || 'mainnet.1'
   const mangoGroupConfig: GroupConfig = Config.ids().groups.filter((group) => group.name === groupName)[0]!
-  const connection = new Connection(process.env.NODE_ENDPOINT as string, 'processed' as Commitment)
+  const connection = new Connection(nodeEndpoint, 'processed' as Commitment)
   const mangoClient = new MangoClient(connection, mangoGroupConfig.mangoProgramId)
   const mangoGroup = await mangoClient.getMangoGroup(mangoGroupConfig.publicKey)
   const perpMarketConfig = getMarketByBaseSymbolAndKind(mangoGroupConfig, marketName.split('-')[0] as string, 'perp')
