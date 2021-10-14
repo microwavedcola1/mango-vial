@@ -105,7 +105,7 @@ async function start() {
     logger.log('info', `Serum-vial server v${pkg.version} is running on port ${port}.`)
   }
 
-  logger.log('info', `See https://github.com/tardis-dev/serum-vial for more information.`)
+  logger.log('info', `See https://github.com/microwavedcola/mango-vial for more information.`)
 }
 
 start()
