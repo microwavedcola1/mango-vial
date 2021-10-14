@@ -94,9 +94,9 @@ export class CircularBuffer<T> {
 const { BroadcastChannel } = require('worker_threads')
 
 export const minionReadyChannel = new BroadcastChannel('MinionReady') as BroadcastChannel
-export const serumProducerReadyChannel = new BroadcastChannel('SerumProducerReady') as BroadcastChannel
-export const serumDataChannel = new BroadcastChannel('SerumData') as BroadcastChannel
-export const serumMarketsChannel = new BroadcastChannel('SerumMarkets') as BroadcastChannel
+export const mangoProducerReadyChannel = new BroadcastChannel('MangoProducerReady') as BroadcastChannel
+export const mangoDataChannel = new BroadcastChannel('MangoData') as BroadcastChannel
+export const mangoMarketsChannel = new BroadcastChannel('MangoMarkets') as BroadcastChannel
 export const cleanupChannel = new BroadcastChannel('Cleanup') as BroadcastChannel
 export const partitionDetectedChannel = new BroadcastChannel('PartitionDetected') as BroadcastChannel
 
@@ -133,8 +133,7 @@ export function getDefaultMarkets(): MangoPerpMarket[] {
     defaultMarkets.push({
       name: market.name,
       address: market.publicKey.toBase58(),
-      programId: mangoGroupConfig.mangoProgramId.toBase58(),
-      deprecated: false
+      programId: mangoGroupConfig.mangoProgramId.toBase58()
     })
   }
 

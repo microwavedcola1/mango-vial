@@ -10,12 +10,12 @@ import {
   getDidYouMean,
   loadPerpMarket,
   minionReadyChannel,
-  serumDataChannel,
-  serumMarketsChannel,
+  mangoDataChannel,
+  mangoMarketsChannel,
   wait
 } from './helpers'
 import { logger } from './logger'
-import { MessageEnvelope } from './serum_producer'
+import { MessageEnvelope } from './mango_producer'
 import { ErrorResponse, RecentTrades, SubRequest, SuccessResponse } from './types'
 
 const meta = {
@@ -151,7 +151,7 @@ class Minion {
       )
 
       this._cachedListMarketsResponse = JSON.stringify(markets, null, 2)
-      serumMarketsChannel.postMessage(this._cachedListMarketsResponse)
+      mangoMarketsChannel.postMessage(this._cachedListMarketsResponse)
     }
 
     await wait(1)
@@ -393,11 +393,11 @@ const { port, nodeEndpoint, markets } = workerData as { port: number; nodeEndpoi
 const minion = new Minion(nodeEndpoint, markets)
 
 minion.start(port).then(() => {
-  serumDataChannel.onmessage = (message) => {
+  mangoDataChannel.onmessage = (message) => {
     minion.processMessages(message.data)
   }
 
-  serumMarketsChannel.onmessage = (message) => {
+  mangoMarketsChannel.onmessage = (message) => {
     minion.initMarketsCache(message.data)
   }
 

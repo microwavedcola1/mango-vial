@@ -8,8 +8,8 @@ import {
   decimalPlaces,
   loadPerpMarket,
   partitionDetectedChannel,
-  serumDataChannel,
-  serumProducerReadyChannel
+  mangoDataChannel,
+  mangoProducerReadyChannel
 } from './helpers'
 import { logger } from './logger'
 import { RPCClient } from './rpc_client'
@@ -25,11 +25,11 @@ process.on('unhandledRejection', (err) => {
   throw err
 })
 
-// SerumProducer responsibility is to:
-// - connect to Serum Node RPC API via WS and subscribe to single Serum market
+// MangoProducer responsibility is to:
+// - connect to Mango Node RPC API via WS and subscribe to single Mango perp market
 // - map received data to normalized data messages and broadcast those
 
-export class SerumProducer {
+export class MangoProducer {
   constructor(
     private readonly _options: {
       nodeEndpoint: string
@@ -42,7 +42,7 @@ export class SerumProducer {
 
   public async run(onData: OnDataCallback) {
     let started = false
-    logger.log('info', `Serum producer starting for ${this._options.marketName} market...`)
+    logger.log('info', `Mango producer starting for ${this._options.marketName} market...`)
 
     const marketMeta = this._options.markets.find((m) => m.name == this._options.marketName)!
 
@@ -75,9 +75,9 @@ export class SerumProducer {
 
     for await (const notification of rpcClient.streamAccountsNotification(market, this._options.marketName)) {
       if (started === false) {
-        logger.log('info', `Serum producer started for ${this._options.marketName} market...`)
+        logger.log('info', `Mango producer started for ${this._options.marketName} market...`)
         started = true
-        serumProducerReadyChannel.postMessage('ready')
+        mangoProducerReadyChannel.postMessage('ready')
       }
 
       if (notification.reset) {
@@ -92,10 +92,10 @@ export class SerumProducer {
   }
 }
 
-const serumProducer = new SerumProducer(workerData)
+const mangoProducer = new MangoProducer(workerData)
 
-serumProducer.run((envelopes) => {
-  serumDataChannel.postMessage(envelopes)
+mangoProducer.run((envelopes) => {
+  mangoDataChannel.postMessage(envelopes)
 })
 
 export type MessageEnvelope = {

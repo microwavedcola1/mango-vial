@@ -5,6 +5,6 @@ ARG VERSION_ARG
 RUN apt-get update && apt-get install -y git
 
 # install serum-vial globally (exposes serum-vial command)
-RUN npm install --global --unsafe-perm serum-vial@$VERSION_ARG
+RUN npm install --global --unsafe-perm mango-vial@$VERSION_ARG
 # run it
-CMD serum-vial
+CMD mango-vial

@@ -2,7 +2,7 @@ import { BookSide, BookSideLayout, PerpMarket, PerpOrder } from '@blockworks-fou
 import { CircularBuffer } from './helpers'
 import { logger } from './logger'
 import { AccountsNotificationPayload } from './rpc_client'
-import { MessageEnvelope } from './serum_producer'
+import { MessageEnvelope } from './mango_producer'
 import { DataMessage, L2, OrderItem, PriceLevel, Quote, RecentTrades, Trade } from './types'
 
 // DataMapper maps bids, asks and evenQueue accounts data to normalized messages
@@ -236,7 +236,6 @@ export class DataMapper {
     this._currentQuote = undefined
   }
 
-  // based on https://github.com/project-serum/serum-ts/blob/525786435d6893c1cc6a670b39a0ba575dd9cca6/packages/serum/src/market.ts#L1389
   private _mapToL2Snapshot(slabItems: PerpOrder[]) {
     const levels: [number, number][] = []
 
@@ -335,7 +334,6 @@ export class DataMapper {
     return this._mapToOrderItem(perpOrder, true)
   }
 
-  // based on https://github.com/project-serum/serum-ts/blob/525786435d6893c1cc6a670b39a0ba575dd9cca6/packages/serum/src/market.ts#L1414
   private _mapToOrderItem = (perpOrder: PerpOrder, isBids: boolean) => {
     const orderItem: OrderItem = {
       orderId: perpOrder.orderId.toString(),

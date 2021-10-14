@@ -1,7 +1,7 @@
 import os from 'os'
 import path from 'path'
 import { Worker } from 'worker_threads'
-import { cleanupChannel, minionReadyChannel, serumProducerReadyChannel, wait } from './helpers'
+import { cleanupChannel, minionReadyChannel, mangoProducerReadyChannel as mangoProducerReadyChannel, wait } from './helpers'
 import { logger } from './logger'
 import { MangoPerpMarket } from './types'
 
@@ -51,30 +51,30 @@ export async function bootServer({
     resolve()
   })
 
-  logger.log('info', `Starting serum producers for ${markets.length} markets, rpc endpoint: ${nodeEndpoint}`)
+  logger.log('info', `Starting mango producers for ${markets.length} markets, rpc endpoint: ${nodeEndpoint}`)
 
   let readyProducersCount = 0
 
-  serumProducerReadyChannel.onmessage = () => readyProducersCount++
+  mangoProducerReadyChannel.onmessage = () => readyProducersCount++
 
   for (const market of markets) {
-    const serumProducerWorker = new Worker(path.resolve(__dirname, 'serum_producer.js'), {
+    const mangoProducerWorker = new Worker(path.resolve(__dirname, 'mango_producer.js'), {
       workerData: { marketName: market.name, nodeEndpoint, markets, commitment, wsEndpointPort }
     })
 
-    serumProducerWorker.on('error', (err) => {
+    mangoProducerWorker.on('error', (err) => {
       logger.log(
         'error',
-        `Serum producer worker ${serumProducerWorker.threadId} error occurred: ${err.message} ${err.stack}`
+        `Mango producer worker ${mangoProducerWorker.threadId} error occurred: ${err.message} ${err.stack}`
       )
       throw err
     })
 
-    serumProducerWorker.on('exit', (code) => {
-      logger.log('error', `Serum producer worker: ${serumProducerWorker.threadId} died with code: ${code}`)
+    mangoProducerWorker.on('exit', (code) => {
+      logger.log('error', `Mango producer worker: ${mangoProducerWorker.threadId} died with code: ${code}`)
     })
 
-    // just in case to not get hit by serum RPC node rate limits...
+    // just in case to not get hit by  mango RPC node rate limits...
     await wait(1000)
   }
 

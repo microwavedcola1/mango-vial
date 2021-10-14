@@ -1,5 +1,5 @@
 {
-  "name": "serum-vial",
+  "name": "mango-vial",
   "version": "1.2.5",
   "engines": {
     "node": ">=15"
@@ -8,19 +8,19 @@
   "main": "dist/index.js",
   "source": "src/index.js",
   "types": "dist/index.d.ts",
-  "repository": "tardis-dev/serum-vial",
+  "repository": "tardis-dev/mango-vial",
   "homepage": "https://github.com/tardis-dev/serum-vial",
   "scripts": {
     "build": "tsc",
     "precommit": "lint-staged",
     "test": "npm run build && jest --forceExit",
     "prepare": "npm run build",
-    "start:debug": "npm run build && node ./bin/serum-vial.js --log-level=debug",
+    "start:debug": "npm run build && node ./bin/mango-vial.js --log-level=debug",
     "format": "prettier --write .",
     "check-format": "prettier --check ."
   },
   "bin": {
-    "serum-vial": "bin/serum-vial.js"
+    "mango-vial": "bin/mango-vial.js"
   },
   "files": [
     "src",
@@ -28,8 +28,8 @@
     "bin"
   ],
   "keywords": [
-    "serum dex",
-    "serum api",
+    "mango dex",
+    "mango api",
     "api client",
     "solana",
     "cryptocurrency api",
