@@ -13,6 +13,12 @@ This project is forked from https://github.com/tardis-dev/serum-vial
 
 ## Getting started
 
+Start a local instance
+```
+npm run start:debug
+```
+
+
 Run the code snippet below in the browser Dev Tools directly or in Node.js (requires installation of `ws` lib.
 
 ```js
