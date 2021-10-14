@@ -1,8 +1,8 @@
 {
   "name": "mango-vial",
-  "version": "1.2.5",
+  "version": "0.0.1",
   "engines": {
-    "node": ">=15"
+    "node": ">=16"
   },
   "description": "Real-time WebSocket market data API server for Mango Perp Markets",
   "main": "dist/index.js",
