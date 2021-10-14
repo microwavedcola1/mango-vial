@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 import WebSocket from 'ws'
-import { bootServer, DataMessage, MangoListPerpMarketItem, stopServer, SubRequest, SuccessResponse } from '../dist'
+import { bootServer, DataMessage, MangoPerpMarket, stopServer, SubRequest, SuccessResponse } from '../dist'
 import { wait } from '../dist/helpers'
 
 const PORT = 8989
@@ -10,7 +10,7 @@ const WS_ENDPOINT = `ws://localhost:${PORT}/v1/ws`
 async function fetchMarkets() {
   const response = await fetch(`http://localhost:${PORT}/v1/markets`)
 
-  return (await response.json()) as MangoListPerpMarketItem[]
+  return (await response.json()) as MangoPerpMarket[]
 }
 
 describe('serum-vial', () => {
@@ -21,7 +21,6 @@ describe('serum-vial', () => {
       markets: [
         {
           address: 'DtEcjPLyD4YtTBB4q8xwFZ9q49W89xZCZtJyrGebi5t8',
-          deprecated: false,
           name: 'BTC-PERP',
           programId: 'mv3ekLzLbnVPNxjSKvqBpU3ZeZXPQdEC3bp5MDEBG68'
         }
@@ -42,46 +41,6 @@ describe('serum-vial', () => {
       const markets = await fetchMarkets()
 
       expect(markets).toMatchSnapshot()
-    },
-    TIMEOUT
-  )
-
-  test(
-    'WS trades data stream',
-    async () => {
-      const wsClient = new SimpleWebsocketClient(WS_ENDPOINT)
-      const markets = await fetchMarkets()
-
-      const subscribeRequest: SubRequest = {
-        op: 'subscribe',
-        channel: 'trades',
-        markets: markets.map((m) => m.name)
-      }
-
-      let receivedSubscribed = false
-      let receivedRecentTrades = false
-
-      await wsClient.send(subscribeRequest)
-      let messagesCount = 0
-
-      for await (const message of wsClient.stream()) {
-        if (message.type === 'subscribed') {
-          receivedSubscribed = true
-        }
-
-        if (message.type === 'recent_trades') {
-          receivedRecentTrades = true
-        }
-
-        messagesCount++
-        if (messagesCount == 2) {
-          break
-        }
-      }
-
-      expect(messagesCount).toBe(2)
-      expect(receivedSubscribed).toBe(true)
-      expect(receivedRecentTrades).toBe(true)
     },
     TIMEOUT
   )

@@ -9,7 +9,7 @@
   "source": "src/index.js",
   "types": "dist/index.d.ts",
   "repository": "microwavedcola1/mango-vial",
-  "homepage": "https://github.com/microwavedcola1/serum-vial",
+  "homepage": "https://github.com/microwavedcola1/mango-vial",
   "scripts": {
     "build": "tsc",
     "precommit": "lint-staged",

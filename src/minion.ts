@@ -184,10 +184,6 @@ class Minion {
         this._quotesSerialized[message.market] = message.payload
       }
 
-      if (message.type === 'recent_trades') {
-        this._recentTradesSerialized[message.market] = message.payload
-      }
-
       if (message.publish) {
         this._server.publish(topic, message.payload)
       }
@@ -246,22 +242,6 @@ class Minion {
           if (request.op === 'subscribe') {
             if (ws.isSubscribed(topic)) {
               continue
-            }
-
-            if (type === 'recent_trades') {
-              const recentTrades = this._recentTradesSerialized[market]
-              if (recentTrades !== undefined) {
-                await this._send(ws, () => this._recentTradesSerialized[market])
-              } else {
-                const emptyRecentTradesMessage: RecentTrades = {
-                  type: 'recent_trades',
-                  market,
-                  timestamp: new Date().toISOString(),
-                  trades: []
-                }
-
-                await this._send(ws, () => JSON.stringify(emptyRecentTradesMessage))
-              }
             }
 
             if (type === 'quote') {

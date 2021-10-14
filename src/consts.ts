@@ -1,7 +1,6 @@
 export const OPS = ['subscribe', 'unsubscribe'] as const
 export const CHANNELS = ['level2', 'level1', 'trades'] as const
 
-const TRADES_MESSAGE_TYPES = ['recent_trades', 'trade'] as const
 const LEVEL1_MESSAGE_TYPES = ['quote'] as const
 const LEVEL2_MESSAGE_TYPES = ['l2snapshot', 'l2update'] as const
 
