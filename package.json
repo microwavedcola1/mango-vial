@@ -1,5 +1,5 @@
 {
-  "name": "@microwavedcola/mango-vial",
+  "name": "mango-vial",
   "version": "0.0.1",
   "engines": {
     "node": ">=16"
