@@ -37,8 +37,6 @@ export class DataMapper {
   private readonly _version: number
   private _zeroWithPrecision: string
 
-  private readonly _recentTrades: CircularBuffer<Trade> = new CircularBuffer(100)
-
   constructor(
     private readonly _options: {
       readonly symbol: string
