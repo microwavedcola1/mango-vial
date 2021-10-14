@@ -26,7 +26,7 @@ ws.onopen = () => {
   const subscribeL2 = {
     op: 'subscribe',
     channel: 'level2',
-    markets: ['BTC/USDC']
+    markets: ['BTC-PERP']
   }
 
   ws.send(JSON.stringify(subscribeL2))
@@ -179,7 +179,7 @@ If you want to unsubscribe from channel and markets, send an unsubscribe message
 {
   "op": "subscribe",
   "channel": "level2",
-  "markets": ["BTC/USDC"]
+  "markets": ["BTC-PERP"]
 }
 ```
 
@@ -204,7 +204,7 @@ Once a subscription (or unsubscription) request is processed by the server, it w
 {
   "type": "subscribed",
   "channel": "level2",
-  "markets": ["BTC/USDC"],
+  "markets": ["BTC-PERP"],
   "timestamp": "2021-03-23T17:06:30.010Z"
 }
 ```
@@ -296,7 +296,7 @@ Pushed real-time for any change in best bid/ask price or size for a given market
 ```json
 {
   "type": "quote",
-  "market": "BTC/USDC",
+  "market": "BTC-PERP",
   "timestamp": "2021-03-24T07:11:57.186Z",
   "slot": 70544253,
   "version": 3,
@@ -334,7 +334,7 @@ Entire up-to-date order book snapshot with orders aggregated by price level push
 ```json
 {
   "type": "l2snapshot",
-  "market": "BTC/USDC",
+  "market": "BTC-PERP",
   "timestamp": "2021-03-24T09:00:53.087Z",
   "slot": 70555623,
   "version": 3,
@@ -380,7 +380,7 @@ Pushed real-time for any change to the order book for a given market with update
 ```json
 {
   "type": "l2update",
-  "market": "BTC/USDC",
+  "market": "BTC-PERP",
   "timestamp": "2021-03-24T09:00:55.586Z",
   "slot": 70555627,
   "version": 3,
@@ -430,7 +430,7 @@ Returns Mango Perp markets list supported by  mango-vial instance (it can be upd
 ```json
 [
   {
-    "name": "BTC/USDC",
+    "name": "BTC-PERP",
     "address": "A8YFbxQYFVqKZaoYJLLUVcQiWP7G2MeEgW5wsAQgMvFw",
     "programId": "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin",
   }
