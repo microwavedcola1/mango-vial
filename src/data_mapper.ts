@@ -3,7 +3,7 @@ import { CircularBuffer } from './helpers'
 import { logger } from './logger'
 import { AccountsNotificationPayload } from './rpc_client'
 import { MessageEnvelope } from './mango_producer'
-import { DataMessage, L2, OrderItem, PriceLevel, Quote, RecentTrades, Trade } from './types'
+import { DataMessage, L2, OrderItem, PriceLevel, Quote, Trade } from './types'
 
 // DataMapper maps bids, asks and evenQueue accounts data to normalized messages
 export class DataMapper {

@@ -16,7 +16,7 @@ import {
 } from './helpers'
 import { logger } from './logger'
 import { MessageEnvelope } from './mango_producer'
-import { ErrorResponse, RecentTrades, SubRequest, SuccessResponse } from './types'
+import { ErrorResponse, SubRequest, SuccessResponse } from './types'
 
 const meta = {
   minionId: threadId
