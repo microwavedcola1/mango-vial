@@ -314,7 +314,7 @@ export class DataMapper {
     return [price, size]
   }
 
-  private _putInEnvelope(message: DataMessage | RecentTrades, publish: boolean) {
+  private _putInEnvelope(message: DataMessage, publish: boolean) {
     const envelope: MessageEnvelope = {
       type: message.type,
       market: message.market,

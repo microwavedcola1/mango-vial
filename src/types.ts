@@ -48,14 +48,6 @@ export interface Quote extends DataMessage {
   readonly bestBid: PriceLevel | undefined
 }
 
-export interface Trade extends DataMessage {
-  readonly type: 'trade'
-  readonly price: string
-  readonly size: string
-  readonly side: 'buy' | 'sell' // liquidity taker side
-  readonly id: string
-}
-
 export type OrderItem = {
   readonly price: string
   readonly size: string
