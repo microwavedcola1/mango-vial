@@ -4,12 +4,12 @@
   "engines": {
     "node": ">=15"
   },
-  "description": "Real-time WebSocket market data API server for Serum DEX",
+  "description": "Real-time WebSocket market data API server for Mango Perp Markets",
   "main": "dist/index.js",
   "source": "src/index.js",
   "types": "dist/index.d.ts",
-  "repository": "tardis-dev/mango-vial",
-  "homepage": "https://github.com/tardis-dev/serum-vial",
+  "repository": "microwavedcola1/mango-vial",
+  "homepage": "https://github.com/microwavedcola1/serum-vial",
   "scripts": {
     "build": "tsc",
     "precommit": "lint-staged",
