@@ -420,16 +420,8 @@ Returns Mango Perp markets list supported by  mango-vial instance (it can be upd
 ```ts
 {
   "name": string,
-  "baseMintAddress": string,
-  "quoteMintAddress": string,
-  "version": number,
   "address": string,
   "programId": string,
-  "baseCurrency": string,
-  "quoteCurrency": string,
-  "tickSize": number,
-  "minOrderSize": number,
-  "deprecated": boolean
 }[]
 ```
 
@@ -439,16 +431,8 @@ Returns Mango Perp markets list supported by  mango-vial instance (it can be upd
 [
   {
     "name": "BTC/USDC",
-    "baseCurrency": "BTC",
-    "quoteCurrency": "USDC",
-    "version": 3,
     "address": "A8YFbxQYFVqKZaoYJLLUVcQiWP7G2MeEgW5wsAQgMvFw",
     "programId": "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin",
-    "baseMintAddress": "9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E",
-    "quoteMintAddress": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-    "tickSize": 0.1,
-    "minOrderSize": 0.0001,
-    "deprecated": false
   }
 ]
 ```
