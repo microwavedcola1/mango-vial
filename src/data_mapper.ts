@@ -336,13 +336,10 @@ export class DataMapper {
   }
 
   // based on https://github.com/project-serum/serum-ts/blob/525786435d6893c1cc6a670b39a0ba575dd9cca6/packages/serum/src/market.ts#L1414
-  private _mapToOrderItem = (
-    perpOrder: PerpOrder,
-    isBids: boolean
-  ) => {
+  private _mapToOrderItem = (perpOrder: PerpOrder, isBids: boolean) => {
     const orderItem: OrderItem = {
       orderId: perpOrder.orderId.toString(),
-      clientId: perpOrder.clientId ? perpOrder.clientId.toString() : '', // todo
+      clientId: perpOrder.clientId ? perpOrder.clientId.toString() : '',
       side: isBids ? 'buy' : 'sell',
       price: perpOrder.price.toFixed(this._options.priceDecimalPlaces),
       size: perpOrder.size.toFixed(this._options.sizeDecimalPlaces),

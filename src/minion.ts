@@ -1,13 +1,14 @@
 import { Connection } from '@solana/web3.js'
 import { App, DISABLED, HttpResponse, SSLApp, TemplatedApp, us_listen_socket_close, WebSocket } from 'uWebSockets.js'
 import { isMainThread, threadId, workerData } from 'worker_threads'
-import { MangoListPerpMarketItem, MangoPerpMarket } from '.'
+import { MangoPerpMarket } from '.'
 import { CHANNELS, MESSAGE_TYPES_PER_CHANNEL, OPS } from './consts'
 import {
   cleanupChannel,
   executeAndRetry,
   getAllowedValuesText,
   getDidYouMean,
+  loadPerpMarket,
   minionReadyChannel,
   serumDataChannel,
   serumMarketsChannel,
@@ -137,29 +138,12 @@ class Minion {
           market
           return executeAndRetry(
             async () => {
-              const connection = new Connection(this._nodeEndpoint)
-              // const { tickSize, minOrderSize, baseMintAddress, quoteMintAddress, programId } = await Market.load(
-              //   connection,
-              //   new PublicKey(market.publicKey.toBase58),
-              //   undefined,
-              //   new PublicKey(market.programId)
-              // )
-
-              // const [baseCurrency, quoteCurrency] = market.name.split('/')
-              const serumMarket: MangoListPerpMarketItem = {
-                name: undefined!, // todo market.name,
-                baseCurrency: undefined!, //baseCurrency!,
-                quoteCurrency: undefined!, //quoteCurrency!,
-                version: undefined!, //getLayoutVersion(programId),
-                address: undefined!, //market.address,
-                programId: undefined!, //market.programId,
-                baseMintAddress: undefined!, //baseMintAddress.toBase58(),
-                quoteMintAddress: undefined!, //quoteMintAddress.toBase58(),
-                tickSize: 0, //todo
-                minOrderSize: 0, //todo
-                deprecated: false //market.deprecated
+              const mangoPerpMarket: MangoPerpMarket = {
+                name: market.name,
+                address: market.address,
+                programId: market.programId
               }
-              return serumMarket
+              return mangoPerpMarket
             },
             { maxRetries: 10 }
           )

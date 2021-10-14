@@ -4,7 +4,13 @@ import { isMainThread, workerData } from 'worker_threads'
 import { MangoPerpMarket } from '.'
 import { MessageType } from './consts'
 import { DataMapper } from './data_mapper'
-import { decimalPlaces, loadPerpMarket, partitionDetectedChannel, serumDataChannel, serumProducerReadyChannel } from './helpers'
+import {
+  decimalPlaces,
+  loadPerpMarket,
+  partitionDetectedChannel,
+  serumDataChannel,
+  serumProducerReadyChannel
+} from './helpers'
 import { logger } from './logger'
 import { RPCClient } from './rpc_client'
 

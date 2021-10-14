@@ -73,23 +73,8 @@ export type OrderItem = {
   readonly feeTier: number
 }
 
-export type MangoListPerpMarketItem = {
-  name: string
-  address: string
-  baseCurrency: string
-  quoteCurrency: string
-  version: number
-  programId: string
-  baseMintAddress: string
-  quoteMintAddress: string
-  tickSize: number
-  minOrderSize: number
-  deprecated: boolean
-}
-
 export type MangoPerpMarket = {
   address: string
   name: string
   programId: string
-  deprecated: boolean
 }

@@ -1,4 +1,3 @@
-// import { MARKETS } from '@project-serum/serum'
 import {
   Config,
   getMarketByBaseSymbolAndKind,
