@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 import WebSocket from 'ws'
-import { bootServer, stopServer, DataMessage, SerumListMarketItem, SubRequest, SuccessResponse } from '../dist'
+import { bootServer, DataMessage, MangoListPerpMarketItem, stopServer, SubRequest, SuccessResponse } from '../dist'
 import { wait } from '../dist/helpers'
 
 const PORT = 8989
@@ -10,7 +10,7 @@ const WS_ENDPOINT = `ws://localhost:${PORT}/v1/ws`
 async function fetchMarkets() {
   const response = await fetch(`http://localhost:${PORT}/v1/markets`)
 
-  return (await response.json()) as SerumListMarketItem[]
+  return (await response.json()) as MangoListPerpMarketItem[]
 }
 
 describe('serum-vial', () => {
@@ -20,14 +20,14 @@ describe('serum-vial', () => {
       commitment: 'confirmed',
       markets: [
         {
-          address: 'HWHvQhFmJB3NUcu1aihKmrKegfVxBEHzwVX6yZCKEsi1',
+          address: 'DtEcjPLyD4YtTBB4q8xwFZ9q49W89xZCZtJyrGebi5t8',
           deprecated: false,
-          name: 'SOL/USDT',
-          programId: '9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin'
+          name: 'BTC-PERP',
+          programId: 'mv3ekLzLbnVPNxjSKvqBpU3ZeZXPQdEC3bp5MDEBG68'
         }
       ],
       minionsCount: 1,
-      nodeEndpoint: 'https://solana-api.projectserum.com',
+      nodeEndpoint: process.env.NODE_ENDPOINT as string,
       wsEndpointPort: undefined
     })
   }, TIMEOUT)
@@ -163,47 +163,6 @@ describe('serum-vial', () => {
     },
     TIMEOUT
   )
-
-  test(
-    'WS level3 data stream',
-    async () => {
-      const wsClient = new SimpleWebsocketClient(WS_ENDPOINT)
-      const markets = await fetchMarkets()
-
-      const subscribeRequest: SubRequest = {
-        op: 'subscribe',
-        channel: 'level3',
-        markets: markets.map((m) => m.name)
-      }
-
-      let receivedSubscribed = false
-      let receivedSnapshot = false
-
-      await wsClient.send(subscribeRequest)
-      let l3MessagesCount = 0
-
-      for await (const message of wsClient.stream()) {
-        if (message.type === 'subscribed') {
-          receivedSubscribed = true
-        }
-
-        if (message.type === 'l3snapshot') {
-          receivedSnapshot = true
-        }
-
-        l3MessagesCount++
-        if (l3MessagesCount == 20) {
-          break
-        }
-      }
-
-      expect(l3MessagesCount).toBe(20)
-      expect(receivedSubscribed).toBe(true)
-      expect(receivedSnapshot).toBe(true)
-    },
-    TIMEOUT
-  )
-
   class SimpleWebsocketClient {
     private readonly _socket: WebSocket
 

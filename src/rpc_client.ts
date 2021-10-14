@@ -1,4 +1,4 @@
-import { Market } from '@project-serum/serum'
+import { PerpMarket } from '@blockworks-foundation/mango-client'
 import { AccountInfo, Commitment, PublicKey } from '@solana/web3.js'
 import AbortController from 'abort-controller'
 import fetch from 'node-fetch'
@@ -18,7 +18,10 @@ export class RPCClient {
     }
   ) {}
 
-  public async *streamAccountsNotification(market: Market, marketName: string): AsyncIterable<AccountsNotification> {
+  public async *streamAccountsNotification(
+    market: PerpMarket,
+    marketName: string
+  ): AsyncIterable<AccountsNotification> {
     const wsEndpoint = new URL(this._options.nodeEndpoint)
     wsEndpoint.protocol = this._options.nodeEndpoint.startsWith('https') ? 'wss' : 'ws'
 
@@ -162,8 +165,7 @@ class AccountsChangeNotifications {
   private _fullyInitialized = false
   private _accountsData: AccountsData = {
     asks: undefined,
-    bids: undefined,
-    eventQueue: undefined
+    bids: undefined
   }
   private _slotStartTimestamp: number | undefined = undefined
   private _publishTID: NodeJS.Timer | undefined = undefined
@@ -184,7 +186,7 @@ class AccountsChangeNotifications {
   private _wsSubsMeta: Map<number, AccountName> = new Map()
 
   constructor(
-    market: Market,
+    market: PerpMarket,
     private readonly _options: {
       readonly nodeWsEndpoint: string
       readonly nodeRestEndpoint: string
@@ -196,17 +198,12 @@ class AccountsChangeNotifications {
       {
         name: 'bids',
         reqId: 1000,
-        address: market.bidsAddress.toBase58()
+        address: market.bids.toBase58()
       },
       {
         name: 'asks',
         reqId: 2000,
-        address: market.asksAddress.toBase58()
-      },
-      {
-        name: 'eventQueue',
-        reqId: 3000,
-        address: (market as any)._decoded.eventQueue.toBase58()
+        address: market.asks.toBase58()
       }
     ]
     this._connectAndStreamData()
@@ -243,7 +240,6 @@ class AccountsChangeNotifications {
 
         this._update('asks', accountsData.asks!, slot)
         this._update('bids', accountsData.bids!, slot)
-        this._update('eventQueue', accountsData.eventQueue!, slot)
 
         return
       }
@@ -263,10 +259,6 @@ class AccountsChangeNotifications {
 
         if (this._accountsData.bids === undefined) {
           this._update('bids', accountsData.bids!, slot)
-        }
-
-        if (this._accountsData.eventQueue === undefined) {
-          this._update('eventQueue', accountsData.eventQueue!, slot)
         }
 
         return
@@ -496,8 +488,7 @@ class AccountsChangeNotifications {
   private _resetCurrentState() {
     this._accountsData = {
       asks: undefined,
-      bids: undefined,
-      eventQueue: undefined
+      bids: undefined
     }
     this._slotStartTimestamp = undefined
     this._currentSlot = undefined
@@ -605,8 +596,7 @@ class AccountsChangeNotifications {
     // clear pending accounts data
     this._accountsData = {
       asks: undefined,
-      bids: undefined,
-      eventQueue: undefined
+      bids: undefined
     }
     this._slotStartTimestamp = undefined
 
@@ -634,11 +624,7 @@ class AccountsChangeNotifications {
   }
 
   private _receivedDataForAllAccounts() {
-    return (
-      this._accountsData.bids !== undefined &&
-      this._accountsData.asks !== undefined &&
-      this._accountsData.eventQueue !== undefined
-    )
+    return this._accountsData.bids !== undefined && this._accountsData.asks !== undefined
   }
 
   private _resetPendingNotificationState() {
@@ -652,7 +638,7 @@ class AccountsChangeNotifications {
     this.onAccountsChange({ reset: true })
   }
 
-  private _update(accountName: 'bids' | 'asks' | 'eventQueue', accountData: Buffer, slot: number) {
+  private _update(accountName: 'bids' | 'asks', accountData: Buffer, slot: number) {
     if (logger.level === 'debug') {
       logger.log('debug', `Received ${accountName} account update, current state ${this._state}`, {
         market: this._options.marketName,
@@ -735,7 +721,7 @@ export type AccountsNotificationPayload = {
   readonly slot: number
   readonly reset: false
 }
-export type AccountName = 'bids' | 'asks' | 'eventQueue'
+export type AccountName = 'bids' | 'asks'
 export type AccountsData = {
   [key in AccountName]?: Buffer
 }

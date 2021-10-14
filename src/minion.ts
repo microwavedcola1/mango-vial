@@ -1,7 +1,7 @@
-import { getLayoutVersion, Market } from '@project-serum/serum'
-import { Connection, PublicKey } from '@solana/web3.js'
-import { App, HttpResponse, DISABLED, SSLApp, TemplatedApp, us_listen_socket_close, WebSocket } from 'uWebSockets.js'
+import { Connection } from '@solana/web3.js'
+import { App, DISABLED, HttpResponse, SSLApp, TemplatedApp, us_listen_socket_close, WebSocket } from 'uWebSockets.js'
 import { isMainThread, threadId, workerData } from 'worker_threads'
+import { MangoListPerpMarketItem, MangoPerpMarket } from '.'
 import { CHANNELS, MESSAGE_TYPES_PER_CHANNEL, OPS } from './consts'
 import {
   cleanupChannel,
@@ -15,7 +15,7 @@ import {
 } from './helpers'
 import { logger } from './logger'
 import { MessageEnvelope } from './serum_producer'
-import { ErrorResponse, RecentTrades, SerumListMarketItem, SerumMarket, SubRequest, SuccessResponse } from './types'
+import { ErrorResponse, RecentTrades, SubRequest, SuccessResponse } from './types'
 
 const meta = {
   minionId: threadId
@@ -65,14 +65,13 @@ class Minion {
   private readonly _wsMessagesRateLimit: (ws: any) => boolean = RateLimit(this.MAX_MESSAGES_PER_SECOND, 1000)
 
   private readonly _l2SnapshotsSerialized: { [market: string]: string } = {}
-  private readonly _l3SnapshotsSerialized: { [market: string]: string } = {}
   private readonly _recentTradesSerialized: { [market: string]: string } = {}
   private readonly _quotesSerialized: { [market: string]: string } = {}
   private readonly _marketNames: string[]
   private _listenSocket: any | undefined = undefined
 
   private MAX_BACKPRESSURE = 1024 * 1024
-  constructor(private readonly _nodeEndpoint: string, private readonly _markets: SerumMarket[]) {
+  constructor(private readonly _nodeEndpoint: string, private readonly _markets: MangoPerpMarket[]) {
     this._marketNames = _markets.map((m) => m.name)
     this._server = this._initServer()
   }
@@ -135,29 +134,30 @@ class Minion {
     if (this._cachedListMarketsResponse === undefined) {
       const markets = await Promise.all(
         this._markets.map((market) => {
+          market
           return executeAndRetry(
             async () => {
               const connection = new Connection(this._nodeEndpoint)
-              const { tickSize, minOrderSize, baseMintAddress, quoteMintAddress, programId } = await Market.load(
-                connection,
-                new PublicKey(market.address),
-                undefined,
-                new PublicKey(market.programId)
-              )
+              // const { tickSize, minOrderSize, baseMintAddress, quoteMintAddress, programId } = await Market.load(
+              //   connection,
+              //   new PublicKey(market.publicKey.toBase58),
+              //   undefined,
+              //   new PublicKey(market.programId)
+              // )
 
-              const [baseCurrency, quoteCurrency] = market.name.split('/')
-              const serumMarket: SerumListMarketItem = {
-                name: market.name,
-                baseCurrency: baseCurrency!,
-                quoteCurrency: quoteCurrency!,
-                version: getLayoutVersion(programId),
-                address: market.address,
-                programId: market.programId,
-                baseMintAddress: baseMintAddress.toBase58(),
-                quoteMintAddress: quoteMintAddress.toBase58(),
-                tickSize,
-                minOrderSize,
-                deprecated: market.deprecated
+              // const [baseCurrency, quoteCurrency] = market.name.split('/')
+              const serumMarket: MangoListPerpMarketItem = {
+                name: undefined!, // todo market.name,
+                baseCurrency: undefined!, //baseCurrency!,
+                quoteCurrency: undefined!, //quoteCurrency!,
+                version: undefined!, //getLayoutVersion(programId),
+                address: undefined!, //market.address,
+                programId: undefined!, //market.programId,
+                baseMintAddress: undefined!, //baseMintAddress.toBase58(),
+                quoteMintAddress: undefined!, //quoteMintAddress.toBase58(),
+                tickSize: 0, //todo
+                minOrderSize: 0, //todo
+                deprecated: false //market.deprecated
               }
               return serumMarket
             },
@@ -194,9 +194,6 @@ class Minion {
       }
       if (message.type === 'l2snapshot') {
         this._l2SnapshotsSerialized[message.market] = message.payload
-      }
-      if (message.type === 'l3snapshot') {
-        this._l3SnapshotsSerialized[message.market] = message.payload
       }
 
       if (message.type === 'quote') {
@@ -289,10 +286,6 @@ class Minion {
 
             if (type == 'l2snapshot') {
               await this._send(ws, () => this._l2SnapshotsSerialized[market])
-            }
-
-            if (type === 'l3snapshot') {
-              await this._send(ws, () => this._l3SnapshotsSerialized[market])
             }
 
             const succeeded = ws.subscribe(topic)
@@ -411,7 +404,7 @@ class Minion {
   }
 }
 
-const { port, nodeEndpoint, markets } = workerData as { port: number; nodeEndpoint: string; markets: SerumMarket[] }
+const { port, nodeEndpoint, markets } = workerData as { port: number; nodeEndpoint: string; markets: MangoPerpMarket[] }
 
 const minion = new Minion(nodeEndpoint, markets)
 

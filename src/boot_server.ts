@@ -3,7 +3,7 @@ import path from 'path'
 import { Worker } from 'worker_threads'
 import { cleanupChannel, minionReadyChannel, serumProducerReadyChannel, wait } from './helpers'
 import { logger } from './logger'
-import { SerumMarket } from './types'
+import { MangoPerpMarket } from './types'
 
 export async function bootServer({
   port,
@@ -102,5 +102,5 @@ type BootOptions = {
   wsEndpointPort: number | undefined
   minionsCount: number
   commitment: string
-  markets: SerumMarket[]
+  markets: MangoPerpMarket[]
 }

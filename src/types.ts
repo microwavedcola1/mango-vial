@@ -1,4 +1,4 @@
-import { Op, Channel, MessageType } from './consts'
+import { Channel, MessageType, Op } from './consts'
 
 export type EventQueueHeader = {
   seqNum: number
@@ -62,12 +62,6 @@ export interface Trade extends DataMessage {
   readonly id: string
 }
 
-export interface Fill extends DataMessage, OrderItem {
-  readonly type: 'fill'
-  readonly maker: boolean
-  readonly feeCost: number
-}
-
 export type OrderItem = {
   readonly price: string
   readonly size: string
@@ -79,33 +73,7 @@ export type OrderItem = {
   readonly feeTier: number
 }
 
-export interface Open extends DataMessage, OrderItem {
-  readonly type: 'open'
-}
-
-export interface Done extends DataMessage {
-  readonly type: 'done'
-  readonly reason: 'filled' | 'canceled'
-  readonly side: 'buy' | 'sell'
-  readonly orderId: string
-  readonly clientId?: string
-  readonly account: string
-  readonly accountSlot: number
-}
-
-export interface Change extends DataMessage, OrderItem {
-  readonly type: 'change'
-}
-
-export interface L3Snapshot extends DataMessage {
-  readonly type: 'l3snapshot'
-  readonly asks: OrderItem[]
-  readonly bids: OrderItem[]
-}
-
-export type L3DataMessage = Open | Fill | Done | L3Snapshot | Change
-
-export type SerumListMarketItem = {
+export type MangoListPerpMarketItem = {
   name: string
   address: string
   baseCurrency: string
@@ -119,7 +87,7 @@ export type SerumListMarketItem = {
   deprecated: boolean
 }
 
-export type SerumMarket = {
+export type MangoPerpMarket = {
   address: string
   name: string
   programId: string

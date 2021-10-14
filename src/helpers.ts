@@ -1,6 +1,14 @@
-import { MARKETS } from '@project-serum/serum'
+// import { MARKETS } from '@project-serum/serum'
+import {
+  Config,
+  getMarketByBaseSymbolAndKind,
+  GroupConfig,
+  MangoClient,
+  PerpMarket
+} from '@blockworks-foundation/mango-client'
+import { Connection, Commitment } from '@solana/web3.js'
 import didYouMean from 'didyoumean2'
-import { SerumMarket } from './types'
+import { MangoPerpMarket } from '.'
 
 export const wait = (delayMS: number) => new Promise((resolve) => setTimeout(resolve, delayMS))
 
@@ -112,25 +120,39 @@ export async function executeAndRetry<T>(
   }
 }
 
-export function getDefaultMarkets(): SerumMarket[] {
-  const defaultMarkets: SerumMarket[] = []
+export function getDefaultMarkets(): MangoPerpMarket[] {
+  const defaultMarkets: MangoPerpMarket[] = []
 
-  for (const market of MARKETS) {
-    if (market.deprecated) {
-      continue
-    }
+  const groupName = process.env.GROUP_NAME || 'mainnet.1'
+  const mangoGroupConfig: GroupConfig = Config.ids().groups.filter((group) => group.name === groupName)[0]!
 
+  for (const market of mangoGroupConfig.perpMarkets) {
     if (defaultMarkets.some((s) => s.name === market.name)) {
       continue
     }
 
     defaultMarkets.push({
       name: market.name,
-      address: market.address.toBase58(),
-      programId: market.programId.toBase58(),
+      address: market.publicKey.toBase58(),
+      programId: mangoGroupConfig.mangoProgramId.toBase58(),
       deprecated: false
     })
   }
 
   return defaultMarkets
+}
+
+export async function loadPerpMarket(marketName: string): Promise<PerpMarket> {
+  const groupName = process.env.GROUP_NAME || 'mainnet.1'
+  const mangoGroupConfig: GroupConfig = Config.ids().groups.filter((group) => group.name === groupName)[0]!
+  const connection = new Connection(process.env.NODE_ENDPOINT as string, 'processed' as Commitment)
+  const mangoClient = new MangoClient(connection, mangoGroupConfig.mangoProgramId)
+  const mangoGroup = await mangoClient.getMangoGroup(mangoGroupConfig.publicKey)
+  const perpMarketConfig = getMarketByBaseSymbolAndKind(mangoGroupConfig, marketName.split('-')[0] as string, 'perp')
+  return await mangoGroup.loadPerpMarket(
+    connection,
+    perpMarketConfig.marketIndex,
+    perpMarketConfig.baseDecimals,
+    perpMarketConfig.quoteDecimals
+  )
 }

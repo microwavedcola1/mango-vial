@@ -1,12 +1,12 @@
-import { Market } from '@project-serum/serum'
-import { PublicKey } from '@solana/web3.js'
+import { Config, getMarketByBaseSymbolAndKind, GroupConfig, MangoClient } from '@blockworks-foundation/mango-client'
+import { Commitment, Connection } from '@solana/web3.js'
 import { isMainThread, workerData } from 'worker_threads'
+import { MangoPerpMarket } from '.'
 import { MessageType } from './consts'
 import { DataMapper } from './data_mapper'
-import { decimalPlaces, partitionDetectedChannel, serumDataChannel, serumProducerReadyChannel } from './helpers'
+import { decimalPlaces, loadPerpMarket, partitionDetectedChannel, serumDataChannel, serumProducerReadyChannel } from './helpers'
 import { logger } from './logger'
 import { RPCClient } from './rpc_client'
-import { SerumMarket } from './types'
 
 if (isMainThread) {
   const message = 'Exiting. Worker is not meant to run in main thread'
@@ -30,7 +30,7 @@ export class SerumProducer {
       wsEndpointPort: number | undefined
       marketName: string
       commitment: string
-      markets: SerumMarket[]
+      markets: MangoPerpMarket[]
     }
   ) {}
 
@@ -47,12 +47,7 @@ export class SerumProducer {
       wsEndpointPort: this._options.wsEndpointPort
     })
 
-    const market = await Market.load(
-      rpcClient as any,
-      new PublicKey(marketMeta.address),
-      undefined,
-      new PublicKey(marketMeta.programId)
-    )
+    const market = await loadPerpMarket(this._options.marketName)
 
     const priceDecimalPlaces = decimalPlaces(market.tickSize)
     const sizeDecimalPlaces = decimalPlaces(market.minOrderSize)
