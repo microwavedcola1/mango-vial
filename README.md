@@ -1,3 +1,8 @@
+
+
+:no_entry: [DEPRECATED] Active at https://github.com/tardis-dev/mango-bowl
+
+
 # Credits
 
 This project is forked from https://github.com/tardis-dev/serum-vial
